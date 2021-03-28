@@ -14,8 +14,20 @@
         打印发成错误的网站地址 url
         打印错误信息
 '''
-
 import urllib, re
 count = 10
 r = re.compile(r'href=[\'"]?(http[^\'" >]+)')
-seed = 'http://webcrawler.cookdata.cn/httpbin/' # 这是一个神奇的网站，专门为爬虫练习而生
+seed = "http://webcrawler.cookdata.cn/httpbin/" # 这是一个神奇的网站，专门为爬虫练习而生
+queue = [seed]
+storage = {}
+while len(queue) > 0 and count > 0:
+    try:
+        url = queue.pop(0)
+        html = urllib.request.urlopen(url).read(text)
+        news_urls = r.findall(html)
+        queue.extend(news_urls)
+        storage[url] = len(news_urls)
+        count -= 1
+    except Exception as e:
+        print(url)
+        print(e)
